@@ -14,6 +14,8 @@ void main() {
   for (final menu in ['Lihat Proyek', 'Tambah Proyek', 'Logout']) {
     testWidgets('Tombol $menu menampilkan SnackBar', (tester) async {
       await tester.pumpWidget(const MyApp());
+      await tester.ensureVisible(find.text(menu));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(menu));
       await tester.pumpAndSettle();
       expect(find.text('Kamu telah menekan tombol $menu!'), findsOneWidget);
