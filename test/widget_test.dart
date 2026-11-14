@@ -8,7 +8,6 @@ void main() {
     expect(find.text('2506615993'), findsOneWidget);
     expect(find.text('I Nyoman Yadnya Suta Karmana'), findsOneWidget);
     expect(find.text('PBP F'), findsOneWidget);
-
   });
 
   for (final menu in ['Lihat Proyek', 'Tambah Proyek', 'Logout']) {
