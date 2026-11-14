@@ -129,6 +129,52 @@ class MyHomePage extends StatelessWidget {
                     );
                   },
                 ),
+                const SizedBox(height: 24),
+                Card(
+                  margin: EdgeInsets.zero,
+                  elevation: 0,
+                  color: const Color(0xFFEAF0F8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.article_outlined, color: Color(0xFF355A92)),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tentang Saya',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF2C3E60),
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Saya menempuh pendidikan S1 Sistem Informasi '
+                                'di Universitas Indonesia. Saya tertarik '
+                                'mengeksplorasi bagaimana teknologi dan data '
+                                'dapat membantu mengembangkan ide bisnis '
+                                'serta mendukung pengambilan keputusan.',
+                                style: TextStyle(
+                                  color: Color(0xFF52617A),
+                                  height: 1.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
