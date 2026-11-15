@@ -25,6 +25,7 @@ class InfoCard extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
+        // Menyusun ikon, judul, dan isi identitas secara vertikal.
         child: Column(
           children: [
             Icon(icon, color: const Color(0xFF355A92), size: 22),

@@ -11,6 +11,7 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
+      // Warna kartu diambil dari data menu yang diterima.
       color: item.color,
       elevation: 2,
       shadowColor: Colors.black26,
@@ -18,6 +19,7 @@ class ItemCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
+          // Pesan sebelumnya ditutup sebelum pesan tombol yang ditekan ditampilkan.
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(

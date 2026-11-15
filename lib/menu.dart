@@ -8,6 +8,7 @@ import 'widgets/item_card.dart';
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
+  // Setiap item menyimpan nama, ikon, dan warna untuk satu kartu menu.
   static const items = [
     ItemHomepage('Lihat Proyek', Icons.folder_outlined, Color(0xFF355A92)),
     ItemHomepage('Tambah Proyek', Icons.add_circle_outline, Color(0xFF287763)),
@@ -26,9 +27,11 @@ class MyHomePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
+      // Isi halaman dapat digulir saat lebih tinggi daripada layar.
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Center(
+          // Membatasi lebar konten agar tetap nyaman dibaca di layar besar.
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 960),
             child: Column(
@@ -63,10 +66,11 @@ class MyHomePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Wrap memberi kartu ruang untuk turun ke baris berikutnya.
+                // Lebar kartu profil menyesuaikan ruang yang tersedia.
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final width = constraints.maxWidth;
+                    // Dua celah masing-masing 12 piksel disisihkan untuk tiga kartu.
                     final cardWidth = width < 500 ? width : (width - 24) / 3;
                     return Wrap(
                       spacing: 12,
@@ -115,6 +119,7 @@ class MyHomePage extends StatelessWidget {
                   style: TextStyle(color: Color(0xFF65718A)),
                 ),
                 const SizedBox(height: 12),
+                // Menu menggunakan dua kolom di ruang sempit dan tiga di ruang lebar.
                 LayoutBuilder(
                   builder: (context, constraints) {
                     return GridView.count(
@@ -125,11 +130,13 @@ class MyHomePage extends StatelessWidget {
                       mainAxisExtent: 160,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
+                      // Mengubah setiap data menu menjadi widget ItemCard.
                       children: items.map((item) => ItemCard(item)).toList(),
                     );
                   },
                 ),
                 const SizedBox(height: 24),
+                // Bagian ini menampilkan pengantar singkat tentang pemilik portofolio.
                 Card(
                   margin: EdgeInsets.zero,
                   elevation: 0,
