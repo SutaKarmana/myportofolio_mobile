@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Data yang diperlukan untuk menampilkan satu kartu aksi pada halaman utama.
 class ItemHomepage {
