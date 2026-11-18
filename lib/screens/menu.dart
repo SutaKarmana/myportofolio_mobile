@@ -1,8 +1,9 @@
 import 'package:material_ui/material_ui.dart';
 
-import 'models/item_homepage.dart';
-import 'widgets/info_card.dart';
-import 'widgets/item_card.dart';
+import '../models/item_homepage.dart';
+import '../widgets/info_card.dart';
+import '../widgets/left_drawer.dart';
+import '../widgets/project_card.dart';
 
 /// Halaman utama hanya menampilkan profil dan menu, tanpa state lokal.
 class MyHomePage extends StatelessWidget {
@@ -27,6 +28,7 @@ class MyHomePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
+      drawer: const LeftDrawer(isHome: true),
       // Isi halaman dapat digulir saat lebih tinggi daripada layar.
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
