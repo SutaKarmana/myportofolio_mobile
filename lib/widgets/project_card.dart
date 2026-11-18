@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../models/item_homepage.dart';
+import '../screens/project_form.dart';
+import 'left_drawer.dart';
 
 /// Menampilkan kartu aksi berdasarkan model menu yang diterima.
 class ItemCard extends StatelessWidget {
@@ -29,6 +31,16 @@ class ItemCard extends StatelessWidget {
                 content: Text('Kamu telah menekan tombol ${item.name}!'),
               ),
             );
+          // Push mempertahankan beranda agar tombol Back bisa kembali ke sana.
+          if (item.name == 'Tambah Proyek') {
+            Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (_) =>
+                    const ProjectFormPage(drawer: LeftDrawer(isHome: false)),
+              ),
+            );
+          }
         },
         child: Padding(
           padding: const EdgeInsets.all(12),
