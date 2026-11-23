@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../models/item_homepage.dart';
+import '../models/portfolio_page.dart';
 import '../widgets/info_card.dart';
 import '../widgets/left_drawer.dart';
 import '../widgets/project_card.dart';
@@ -12,7 +13,18 @@ class MyHomePage extends StatelessWidget {
   // Setiap item menyimpan nama, ikon, dan warna untuk satu kartu menu.
   static const items = [
     ItemHomepage('Lihat Proyek', Icons.folder_outlined, Color(0xFF355A92)),
-    ItemHomepage('Tambah Proyek', Icons.add_circle_outline, Color(0xFF287763)),
+    ItemHomepage(
+      'Tambah Proyek',
+      Icons.add_circle_outline,
+      Color(0xFF287763),
+      destination: PortfolioPage.project,
+    ),
+    ItemHomepage(
+      'Tambah Edukasi',
+      Icons.school_outlined,
+      Color(0xFF6A4DA3),
+      destination: PortfolioPage.education,
+    ),
     ItemHomepage('Logout', Icons.logout, Color(0xFFAD4D4D)),
   ];
 
@@ -28,7 +40,7 @@ class MyHomePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      drawer: const LeftDrawer(isHome: true),
+      drawer: const LeftDrawer(currentPage: PortfolioPage.home),
       // Isi halaman dapat digulir saat lebih tinggi daripada layar.
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
