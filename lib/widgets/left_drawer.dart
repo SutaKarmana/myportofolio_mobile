@@ -1,8 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../models/portfolio_page.dart';
+import '../navigation/home_navigation.dart';
 import '../screens/education_form.dart';
-import '../screens/menu.dart';
 import '../screens/project_form.dart';
 
 class LeftDrawer extends StatelessWidget {
@@ -16,21 +16,18 @@ class LeftDrawer extends StatelessWidget {
     navigator.pop(); // Tutup drawer sebelum berpindah halaman.
     if (target == currentPage) return;
 
-    if (target == PortfolioPage.home && !isFirstRoute) {
-      // Form yang dibuka dari kartu masih memiliki beranda di bawahnya.
-      navigator.pop();
+    if (target == PortfolioPage.home) {
+      returnToPortfolioHome(navigator, isFirstRoute: isFirstRoute);
       return;
     }
 
-    final page = switch (target) {
-      PortfolioPage.home => const MyHomePage(),
-      PortfolioPage.project => const ProjectFormPage(
-        drawer: LeftDrawer(currentPage: PortfolioPage.project),
-      ),
-      PortfolioPage.education => const EducationFormPage(
-        drawer: LeftDrawer(currentPage: PortfolioPage.education),
-      ),
-    };
+    final page = target == PortfolioPage.project
+        ? const ProjectFormPage(
+            drawer: LeftDrawer(currentPage: PortfolioPage.project),
+          )
+        : const EducationFormPage(
+            drawer: LeftDrawer(currentPage: PortfolioPage.education),
+          );
     navigator.pushReplacement<void, void>(
       MaterialPageRoute<void>(builder: (_) => page),
     );
