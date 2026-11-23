@@ -1,12 +1,40 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../models/portfolio_page.dart';
+import '../screens/education_form.dart';
 import '../screens/menu.dart';
 import '../screens/project_form.dart';
 
 class LeftDrawer extends StatelessWidget {
-  const LeftDrawer({super.key, required this.isHome});
+  const LeftDrawer({super.key, required this.currentPage});
 
-  final bool isHome;
+  final PortfolioPage currentPage;
+
+  void _navigateTo(BuildContext context, PortfolioPage target) {
+    final navigator = Navigator.of(context);
+    final isFirstRoute = ModalRoute.of(context)!.isFirst;
+    navigator.pop(); // Tutup drawer sebelum berpindah halaman.
+    if (target == currentPage) return;
+
+    if (target == PortfolioPage.home && !isFirstRoute) {
+      // Form yang dibuka dari kartu masih memiliki beranda di bawahnya.
+      navigator.pop();
+      return;
+    }
+
+    final page = switch (target) {
+      PortfolioPage.home => const MyHomePage(),
+      PortfolioPage.project => const ProjectFormPage(
+        drawer: LeftDrawer(currentPage: PortfolioPage.project),
+      ),
+      PortfolioPage.education => const EducationFormPage(
+        drawer: LeftDrawer(currentPage: PortfolioPage.education),
+      ),
+    };
+    navigator.pushReplacement<void, void>(
+      MaterialPageRoute<void>(builder: (_) => page),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,39 +68,20 @@ class LeftDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Home'),
-            selected: isHome,
-            onTap: () {
-              final navigator = Navigator.of(context);
-              final isFirstRoute = ModalRoute.of(context)!.isFirst;
-              navigator.pop(); // Tutup drawer sebelum berpindah halaman.
-              if (isHome) return;
-
-              if (isFirstRoute) {
-                navigator.pushReplacement<void, void>(
-                  MaterialPageRoute<void>(builder: (_) => const MyHomePage()),
-                );
-              } else {
-                // Jika form dibuka dari kartu, beranda sudah ada di bawahnya.
-                navigator.pop();
-              }
-            },
+            selected: currentPage == PortfolioPage.home,
+            onTap: () => _navigateTo(context, PortfolioPage.home),
           ),
           ListTile(
             leading: const Icon(Icons.add_circle_outline),
             title: const Text('Add Project'),
-            selected: !isHome,
-            onTap: () {
-              final navigator = Navigator.of(context);
-              navigator.pop();
-              if (!isHome) return;
-
-              navigator.pushReplacement<void, void>(
-                MaterialPageRoute<void>(
-                  builder: (_) =>
-                      const ProjectFormPage(drawer: LeftDrawer(isHome: false)),
-                ),
-              );
-            },
+            selected: currentPage == PortfolioPage.project,
+            onTap: () => _navigateTo(context, PortfolioPage.project),
+          ),
+          ListTile(
+            leading: const Icon(Icons.school_outlined),
+            title: const Text('Add Education'),
+            selected: currentPage == PortfolioPage.education,
+            onTap: () => _navigateTo(context, PortfolioPage.education),
           ),
         ],
       ),

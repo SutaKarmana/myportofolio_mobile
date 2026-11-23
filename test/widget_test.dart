@@ -47,6 +47,59 @@ void main() {
     expect(find.text('Menu Portofolio'), findsOneWidget);
   });
 
+  testWidgets('Kartu Edukasi membuka formulir dan Back kembali ke beranda', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MyApp());
+    final card = find.text('Tambah Edukasi');
+    await tester.ensureVisible(card);
+    await tester.tap(card);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Institusi'), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Menu Portofolio'), findsOneWidget);
+  });
+
+  testWidgets('Drawer membuka Edukasi, Proyek, dan kembali ke Home', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MyApp());
+
+    await tester.tap(find.byType(DrawerButton));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Add Education'));
+    await tester.pumpAndSettle();
+    final institution = find.text('Institusi');
+    expect(institution, findsOneWidget);
+    expect(Navigator.of(tester.element(institution)).canPop(), isFalse);
+
+    await tester.tap(find.byType(DrawerButton));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<ListTile>(find.widgetWithText(ListTile, 'Add Education'))
+          .selected,
+      isTrue,
+    );
+    await tester.tap(find.text('Add Project'));
+    await tester.pumpAndSettle();
+    expect(find.text('Add Project Form'), findsOneWidget);
+
+    await tester.tap(find.byType(DrawerButton));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Add Education'));
+    await tester.pumpAndSettle();
+    expect(institution, findsOneWidget);
+
+    await tester.tap(find.byType(DrawerButton));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Home'));
+    await tester.pumpAndSettle();
+    expect(find.text('Menu Portofolio'), findsOneWidget);
+  });
+
   testWidgets(
     'Form memvalidasi, menampilkan hasil, lalu mengatur ulang input',
     (tester) async {

@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../models/item_homepage.dart';
+import '../models/portfolio_page.dart';
+import '../screens/education_form.dart';
 import '../screens/project_form.dart';
 import 'left_drawer.dart';
 
@@ -21,24 +23,32 @@ class ItemCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          // Pesan sebelumnya ditutup sebelum pesan tombol yang ditekan ditampilkan.
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
+          final messenger = ScaffoldMessenger.of(context);
+          messenger.clearSnackBars();
+          if (item.destination != PortfolioPage.education) {
+            messenger.showSnackBar(
               SnackBar(
                 backgroundColor: item.color,
                 behavior: SnackBarBehavior.floating,
                 content: Text('Kamu telah menekan tombol ${item.name}!'),
               ),
             );
+          }
+
+          final page = switch (item.destination) {
+            PortfolioPage.project => const ProjectFormPage(
+              drawer: LeftDrawer(currentPage: PortfolioPage.project),
+            ),
+            PortfolioPage.education => const EducationFormPage(
+              drawer: LeftDrawer(currentPage: PortfolioPage.education),
+            ),
+            _ => null,
+          };
           // Push mempertahankan beranda agar tombol Back bisa kembali ke sana.
-          if (item.name == 'Tambah Proyek') {
+          if (page != null) {
             Navigator.push<void>(
               context,
-              MaterialPageRoute<void>(
-                builder: (_) =>
-                    const ProjectFormPage(drawer: LeftDrawer(isHome: false)),
-              ),
+              MaterialPageRoute<void>(builder: (_) => page),
             );
           }
         },
