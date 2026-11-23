@@ -69,6 +69,33 @@ void main() {
     expect(find.byType(AlertDialog), findsNothing);
   });
 
+  testWidgets('Batas 255 karakter berlaku untuk institusi dan program studi', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app);
+    final fields = find.byType(TextFormField);
+    final save = find.text('Simpan');
+
+    await tester.enterText(fields.at(0), 'A' * 256);
+    await tester.enterText(fields.at(1), 'B' * 256);
+    await tester.enterText(fields.at(2), '2025');
+    await tester.ensureVisible(save);
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Institusi maksimal 255 karakter.'), findsOneWidget);
+    expect(find.text('Program studi maksimal 255 karakter.'), findsOneWidget);
+    expect(find.byType(AlertDialog), findsNothing);
+
+    await tester.enterText(fields.at(0), ' ${'A' * 255} ');
+    await tester.enterText(fields.at(1), '🎓' * 255);
+    await tester.ensureVisible(save);
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ringkasan Edukasi'), findsOneWidget);
+  });
+
   testWidgets('Form edukasi bisa disimpan dari layar sempit dengan keyboard', (
     tester,
   ) async {

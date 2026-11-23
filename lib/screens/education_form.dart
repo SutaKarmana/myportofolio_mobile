@@ -12,6 +12,7 @@ class EducationFormPage extends StatefulWidget {
 }
 
 class _EducationFormPageState extends State<EducationFormPage> {
+  static const _maxEducationTextLength = 255;
   static final _yearPattern = RegExp(r'^[1-9][0-9]{3}$');
   final _formKey = GlobalKey<FormState>();
   final _startYear = TextEditingController();
@@ -29,7 +30,13 @@ class _EducationFormPageState extends State<EducationFormPage> {
   }
 
   String? _requiredText(String? value, String label) {
-    if ((value ?? '').trim().isEmpty) return '$label wajib diisi.';
+    final text = (value ?? '').trim();
+    if (text.isEmpty) return '$label wajib diisi.';
+
+    // Hitung karakter Unicode seperti pada batas CharField model Education.
+    if (text.runes.length > _maxEducationTextLength) {
+      return '$label maksimal $_maxEducationTextLength karakter.';
+    }
     return null;
   }
 
