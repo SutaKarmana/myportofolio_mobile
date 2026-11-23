@@ -198,7 +198,7 @@ Link percakapan Gemini yang saya gunakan untuk mempelajari konsep dasar Flutter 
 
    `GlobalKey<FormState>` dipasang pada `Form` agar fungsi yang menangani tombol **Simpan** dapat mengambil `FormState` melalui `_formKey.currentState`. Ketika tombol ditekan, `validate()` menjalankan `validator` pada setiap `TextFormField`. Setiap validator mengembalikan pesan jika isian bermasalah atau `null` jika isian diterima. Jika ada yang gagal, pesan muncul pada kolom yang bersangkutan dan dialog belum dibuka.
 
-   Sebagai contoh, Tahun Selesai `2024` ditolak jika Tahun Mulai adalah `2025`. Keduanya bisa diketik dengan papan ketik angka dan sama-sama terdiri dari empat digit, tetapi urutannya tidak sesuai. Karena itu, formulir memeriksa format tahun sekaligus membandingkan kedua nilai. Tahun Selesai boleh kosong, sedangkan Institusi, Program Studi, dan Tahun Mulai wajib diisi. Isian wajib yang berisi spasi saja juga ditolak setelah diperiksa dengan `trim()`.
+   Sebagai contoh, Tahun Selesai `2024` ditolak jika Tahun Mulai adalah `2025`. Keduanya bisa diketik dengan papan ketik angka dan sama-sama terdiri dari empat digit, tetapi urutannya tidak sesuai. Karena itu, formulir memeriksa format tahun sekaligus membandingkan kedua nilai. Tahun Selesai boleh kosong, sedangkan Institusi, Program Studi, dan Tahun Mulai wajib diisi. Untuk Institusi dan Program Studi, validator membuang spasi di tepi isian sebelum memeriksa apakah teks kosong atau melebihi batas 255 karakter dari model Django.
 
    Setelah semua kolom lolos, `form.save()` menjalankan `onSaved` untuk mengambil Institusi dan Program Studi. Nilai tahun dibaca dari `TextEditingController`. Aplikasi kemudian menyusun isian tersebut dan menampilkannya dalam dialog **Ringkasan Edukasi**. Pada tahap ini, nilai yang dikumpulkan digunakan untuk ringkasan di aplikasi.
 
@@ -229,15 +229,17 @@ Contoh berikut diringkas dari arahan dan pertanyaan saya selama pengerjaan.
 3. > Cek lagi hasilnya terhadap checklist dan rubrik nilai 4. Jelaskan bagian yang termasuk hasil tutorial dan bagian yang menjadi tambahan di Tugas 8.
 4. > Tambahkan tombol kembali di AppBar formulir Edukasi agar pengguna bisa kembali ke beranda tanpa membuka drawer. Terapkan alur yang sama di formulir Tambah Proyek.
 5. > Aku cukup kebingungan dengan flow program , coba jelaskan ke aku dan berikan potongan code yang mengarah ke alur tersebut.
-6. > Aku penasaran, disini project flutter apakah dia seperti django yang menyediakan form bawaan gitu? atau buat sendiri. 
+6. > Aku penasaran, disini project flutter apakah dia seperti django yang menyediakan form bawaan gitu? atau buat sendiri.
 
 ### Verifikasi dan Debugging
 
-Saya meminta Codex memeriksa proyek setelah formulir Edukasi terhubung ke beranda dan drawer. Pemeriksaan diulang setelah tombol kembali dan pratinjau durasi ditambahkan. Pada pemeriksaan akhir, `flutter analyze --no-pub` menghasilkan `No issues found` dan `flutter test --no-pub` meluluskan 15 pengujian widget.
+Saya meminta Codex memeriksa proyek setelah formulir Edukasi terhubung ke beranda dan drawer. Pemeriksaan diulang setelah tombol kembali, pratinjau durasi, dan validasi panjang teks ditambahkan. Pada pemeriksaan akhir, `flutter analyze --no-pub` menghasilkan `No issues found` dan `flutter test --no-pub` meluluskan 16 pengujian widget.
 
 Saya memeriksa dua jalur masuk karena keduanya menghasilkan riwayat navigasi yang berbeda. Pengujian membuka formulir dari kartu dan dari drawer, lalu memeriksa apakah pengguna dapat kembali ke beranda. Jika formulir dibuka dari drawer beranda, rute beranda sudah tergantikan. Kasus ini perlu diuji karena memanggil `pop()` saja tidak akan mengembalikan pengguna ke beranda.
 
-Untuk formulir Edukasi, pengujian juga mencakup isian wajib yang kosong, urutan tahun yang salah, perubahan pratinjau durasi, serta dialog ringkasan. Satu pengujian menyimulasikan layar sempit dengan keyboard terbuka untuk memeriksa apakah tombol **Simpan** masih dapat dijangkau dengan menggulir.
+Saya juga meminta Codex menguji hasil build web lokal di Chrome. Opsi **Home** mengembalikan pengguna ke beranda setelah formulir dibuka dari **Add Education** maupun dari kartu **Tambah Edukasi**. Saat **Simpan** ditekan dengan isian kosong, pesan validasi tampil dan dialog ringkasan tetap tertutup.
+
+Untuk formulir Edukasi, pengujian juga mencakup isian wajib yang kosong, urutan tahun yang salah, perubahan pratinjau durasi, serta dialog ringkasan. Saya menambahkan kasus uji untuk memastikan Institusi dan Program Studi menerima 255 karakter dan menolak 256 karakter dengan pesan pada masing-masing kolom. Satu pengujian menyimulasikan layar sempit dengan keyboard terbuka untuk memeriksa apakah tombol **Simpan** masih dapat dijangkau dengan menggulir.
 
 ### Refleksi Penggunaan AI
 
@@ -245,11 +247,11 @@ Perubahan pada formulir, navigasi, dan tampilan akan sulit saya ikuti jika dibah
 
 Pertanyaan tentang tombol kembali membantu saya memahami kenapa cara membuka halaman berpengaruh saat pengguna ingin kembali ke beranda. Setelah membandingkan jalur kartu dan drawer, saya meminta tombol tersebut tersedia juga pada formulir Proyek agar kedua halaman bisa digunakan dengan cara yang sama. Saat meninjau rubrik, saya juga mempertimbangkan manfaat setiap tambahan. Pratinjau durasi membantu pengguna mengetahui hasil dari isian tahunnya sebelum membuka ringkasan.
 
-Rancangan isian tahun mulai dan tahun selesai tetap perlu dicocokkan dengan model Edukasi di proyek Django, yang saat itu belum tersedia untuk diperiksa. Dari sini saya belajar membedakan asumsi dalam rancangan dari perilaku yang sudah diuji. Widget test dapat memeriksa cara formulir memvalidasi dan menampilkan data, sedangkan kesesuaian nama dan tipe field perlu ditinjau dari model Django ketika integrasi dilakukan.
+Pada rancangan awal, bantuan AI berfokus pada isian wajib dan urutan tahun. Saat saya meminta pengecekan ulang terhadap model `Education` di Django, empat isian yang dipilih ternyata sudah sesuai, tetapi aturan `max_length=255` untuk Institusi dan Program Studi terlewat. Saya meminta Codex menambahkan aturan itu pada validator dan menguji nilai tepat di batasnya. Dari sini saya belajar bahwa pengujian bisa lulus meskipun masih ada aturan yang belum diuji, sehingga saya perlu membandingkan sendiri rancangan formulir dengan sumber aturannya.
 
 ### Link Percakapan AI Tugas 8
 
-`https://share.gemini.google/nuAKZKC2omn9
+[Percakapan Gemini untuk Tugas 8](https://share.gemini.google/nuAKZKC2omn9)
 
 ### Sumber Penjelasan
 
@@ -258,6 +260,7 @@ Rancangan isian tahun mulai dan tahun selesai tetap perlu dicocokkan dengan mode
 - [Flutter: Add a drawer to a screen](https://docs.flutter.dev/cookbook/design/drawer)
 - [Flutter: Build a form with validation](https://docs.flutter.dev/cookbook/forms/validation)
 - [Flutter: Understanding constraints](https://docs.flutter.dev/ui/layout/constraints)
+- [Model `Education` pada proyek Django](https://github.com/SutaKarmana/myportofolio/blob/main/main/models.py)
 
 ## Proses Pengerjaan
 
@@ -285,19 +288,16 @@ Pada tahap berikutnya, saya menambahkan pratinjau durasi dari dua tahun yang dii
 
 ## Menjalankan Proyek
 
-Siapkan Git, Flutter SDK, dan Google Chrome. Gunakan Flutter yang menyertakan Dart sesuai persyaratan di `pubspec.yaml` pada branch yang akan dijalankan. Periksa instalasi Flutter dan pastikan Chrome muncul pada daftar perangkat.
+Siapkan Flutter SDK dan Google Chrome. Gunakan versi Dart yang sesuai dengan `pubspec.yaml`. Periksa instalasi Flutter dan pastikan Chrome muncul pada daftar perangkat.
 
 ```bash
 flutter doctor
 flutter devices
 ```
 
-Clone repositori, masuk ke direktori proyek, lalu pilih branch Tugas 8. Untuk membuka versi Tugas 7, gunakan `git switch Tugas07Mobile` pada langkah yang sama.
+Dari folder `myportofolio_mobile`, siapkan dependensi dan jalankan aplikasi di Chrome.
 
 ```bash
-git clone https://github.com/SutaKarmana/myportofolio_mobile.git
-cd myportofolio_mobile
-git switch Tugas08Mobile
 flutter pub get
 flutter run -d chrome
 ```
