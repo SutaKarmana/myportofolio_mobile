@@ -5,6 +5,39 @@ import 'package:myportofolio_mobile/screens/education_form.dart';
 void main() {
   const app = MaterialApp(home: EducationFormPage());
 
+  testWidgets('Perkiraan durasi mengikuti perubahan tahun secara langsung', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app);
+    final fields = find.byType(TextFormField);
+    await tester.enterText(fields.at(0), 'Universitas Indonesia');
+    await tester.enterText(fields.at(1), 'Sistem Informasi');
+    await tester.enterText(fields.at(2), '2025');
+    await tester.enterText(fields.at(3), '2029');
+    await tester.pumpAndSettle();
+    const fourYears = 'Perkiraan durasi: 4 tahun';
+    expect(find.text(fourYears), findsOneWidget);
+
+    await tester.enterText(fields.at(2), '2030');
+    await tester.pumpAndSettle();
+    expect(find.text(fourYears), findsNothing);
+
+    await tester.enterText(fields.at(2), '2026');
+    await tester.pumpAndSettle();
+    const threeYears = 'Perkiraan durasi: 3 tahun';
+    expect(find.text(threeYears), findsOneWidget);
+
+    final save = find.text('Simpan');
+    await tester.ensureVisible(save);
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+    final dialog = find.byType(AlertDialog);
+    expect(
+      find.descendant(of: dialog, matching: find.textContaining(threeYears)),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('Form edukasi menolak isian wajib dan urutan tahun yang salah', (
     tester,
   ) async {

@@ -62,6 +62,32 @@ void main() {
     expect(find.text('Menu Portofolio'), findsOneWidget);
   });
 
+  for (final fromDrawer in [false, true]) {
+    final entryPoint = fromDrawer ? 'drawer' : 'kartu';
+    testWidgets('Tombol Back form Edukasi dari $entryPoint membuka beranda', (
+      tester,
+    ) async {
+      await tester.pumpWidget(const MyApp());
+
+      if (fromDrawer) {
+        await tester.tap(find.byType(DrawerButton));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Add Education'));
+      } else {
+        final card = find.text('Tambah Edukasi');
+        await tester.ensureVisible(card);
+        await tester.tap(card);
+      }
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      final menu = find.text('Menu Portofolio');
+      expect(menu, findsOneWidget);
+      expect(Navigator.of(tester.element(menu)).canPop(), isFalse);
+    });
+  }
+
   testWidgets('Drawer membuka Edukasi, Proyek, dan kembali ke Home', (
     tester,
   ) async {
