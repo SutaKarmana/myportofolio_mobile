@@ -12,6 +12,8 @@ MyPortfolio Mobile adalah aplikasi portofolio pribadi yang saya kembangkan mengg
 
 Pada Tugas 7, halaman utama menampilkan identitas, bagian Tentang Saya, serta tiga kartu menu: Lihat Proyek, Tambah Proyek, dan Logout. Setiap kartu memiliki warna yang berbeda dan menampilkan pesan SnackBar ketika ditekan. Tampilan ini menjadi fondasi untuk pengembangan aplikasi pada tahap pembelajaran berikutnya.
 
+Setelah mempelajari navigasi dan formulir pada Tutorial 09, saya menambahkan halaman Tambah Edukasi pada Tugas 8. Pengguna dapat membukanya dari beranda atau melalui menu samping, lalu melihat ringkasan pendidikan setelah isian dinyatakan valid.
+
 ### Tugas 7
 
 #### Pertanyaan Reflektif
@@ -108,44 +110,6 @@ Beberapa penyesuaian dan tambahan yang saya buat pada Tugas 7:
 
 Untuk menjaga kode tetap rapi, data nama, ikon, dan warna setiap menu disimpan dalam `ItemHomepage`, lalu digunakan oleh `ItemCard` tanpa percabangan warna berdasarkan nama tombol. `InfoCard` dan `ItemCard` juga saya pisahkan ke file tersendiri agar dapat digunakan kembali. `MyHomePage` tetap berupa `StatelessWidget` karena halaman ini belum mengelola perubahan state lokal.
 
-### Menjalankan Proyek
-
-Untuk menjalankan aplikasi, pastikan Flutter SDK dan Google Chrome sudah terpasang. Kondisi instalasi dan perangkat yang tersedia dapat diperiksa melalui terminal:
-
-```bash
-flutter doctor
-flutter devices
-```
-
-Clone repositori, masuk ke folder proyek, lalu pindah ke branch Tugas 7:
-
-```bash
-git clone https://github.com/SutaKarmana/myportofolio_mobile.git
-cd myportofolio_mobile
-git switch Tugas07Mobile
-```
-
-Setelah itu, unduh dependensi dan jalankan aplikasi di Chrome:
-
-```bash
-flutter pub get
-flutter run -d chrome
-```
-
-### Progres Pengerjaan
-
-**Tutorial 08 — Dasar aplikasi Flutter**
-
-Pada tahap ini, saya menyiapkan proyek Flutter dan mempelajari struktur direktori serta peran `main.dart` sebagai titik awal aplikasi. Halaman utama kemudian dipisahkan ke `menu.dart` dan diubah menjadi `StatelessWidget` karena belum memerlukan pengelolaan state lokal.
-
-Saya juga menyusun halaman menggunakan widget seperti `Scaffold`, `Column`, dan `GridView`, serta membuat `InfoCard` untuk identitas dan `ItemCard` untuk menu. Ketika kartu menu ditekan, aplikasi menampilkan pesan melalui SnackBar.
-
-**Tugas 7 — Penyesuaian portofolio pribadi**
-
-Saya melanjutkan proyek Tutorial 08 dengan memberikan warna yang berbeda pada setiap kartu menu melalui model `ItemHomepage`. Struktur kode juga dirapikan dengan memisahkan model, `InfoCard`, dan `ItemCard` ke file tersendiri.
-
-Pada bagian tampilan, saya menambahkan panel sambutan, ikon identitas, dan bagian Tentang Saya. Susunan kartu disesuaikan dengan lebar layar agar lebih nyaman dibaca. Setelah perubahan selesai, saya memeriksa kode menggunakan `flutter analyze` dan menjalankan pengujian widget untuk identitas serta pesan SnackBar.
-
 ## DOKUMENTASI AI Tugas 7
 
 ### AI Disclosure
@@ -206,3 +170,143 @@ Link percakapan Gemini yang saya gunakan untuk mempelajari konsep dasar Flutter 
 - [Flutter API: StatelessWidget](https://api.flutter.dev/flutter/widgets/StatelessWidget-class.html) dan [StatefulWidget](https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html)
 - [Flutter API: BuildContext](https://api.flutter.dev/flutter/widgets/BuildContext-class.html)
 - [Flutter: Hot reload](https://docs.flutter.dev/tools/hot-reload)
+### Tugas 8
+
+#### Pertanyaan Reflektif
+
+1. **Jelaskan perbedaan antara `Navigator.push()`, `Navigator.pushReplacement()`, dan `Navigator.pop()`. Metode apa yang digunakan untuk membuka formulir dari kartu aksi? Jelaskan juga bagaimana opsi Home di drawer membawa pengguna kembali ke halaman utama.**
+
+   `Navigator` mengelola urutan halaman dan dialog yang dibuka. `push()` menambahkan rute baru di atas rute yang sedang aktif. `pushReplacement()` mengganti rute aktif dan mempertahankan rute yang ada di bawahnya. Sementara itu, `pop()` menutup rute teratas agar rute sebelumnya kembali terlihat. Salah satu contohnya adalah tombol **Tutup** pada dialog ringkasan, yang memanggil `pop()` untuk kembali ke formulir.
+
+   Pada proyek ini, kartu **Tambah Proyek** dan **Tambah Edukasi** menggunakan `push()`. Dengan begitu, beranda masih berada di bawah formulir. Perpindahan dari drawer ke salah satu formulir memakai `pushReplacement()`, sehingga berpindah dari satu formulir ke formulir lain melalui drawer tidak terus menambah halaman ke riwayat.
+
+   Saat **Home** dipilih, drawer ditutup lebih dulu. Jika pengguna sudah di beranda, langkahnya selesai. Dari formulir, fungsi `returnToPortfolioHome()` memeriksa posisi rute. Jika beranda masih ada di bawah formulir, fungsi tersebut memakai `pop()`. Jika formulir sudah menjadi rute pertama, misalnya setelah dibuka dari drawer beranda, fungsi tersebut mengganti formulir dengan `MyHomePage` melalui `pushReplacement()`. Tombol kembali pada AppBar kedua formulir memakai fungsi yang sama.
+
+2. **Bagaimana susunan `Scaffold`, `AppBar`, dan `Drawer` membantu menjaga struktur halaman tetap konsisten? Berikan satu contoh penggunaan warna tema portofolio di lebih dari satu halaman.**
+
+   `Scaffold` menjadi kerangka halaman yang menempatkan bilah judul pada `appBar`, menu samping pada `drawer`, dan isi utama pada `body`. Di beranda, bagian `body` berisi profil dan kartu menu. Di halaman Edukasi, bagian yang sama berisi formulir. Judul pada `AppBar` membantu pengguna mengenali halaman yang sedang dibuka, sementara `LeftDrawer` menyediakan pilihan **Home**, **Add Project**, dan **Add Education** pada ketiga halaman. Drawer memakai `currentPage` untuk menandai menu yang sedang aktif.
+
+   Contoh penggunaan tema ada pada AppBar beranda dan formulir Edukasi. Keduanya mengambil warna latar dari `Theme.of(context).colorScheme.primary`. Jika warna utama di tema aplikasi diubah, kedua AppBar akan mengikuti perubahan tersebut karena membaca nilai dari sumber yang sama.
+
+3. **Mengapa tata letak tersebut dipilih untuk formulir? Jelaskan peran widget pengatur jarak dan widget penggulir ketika ruang layar terbatas.**
+
+   Saya memakai `Column` karena urutan isiannya dapat diikuti dari atas ke bawah, mulai dari Institusi dan Program Studi, lalu Tahun Mulai, Tahun Selesai, dan tombol **Simpan**. Properti `padding` pada `SingleChildScrollView` memberi ruang di sekeliling formulir. `SizedBox` memberi jarak antarisian supaya label dan pesan validasi lebih mudah dibaca. Pada layar lebar, `Center` dan `ConstrainedBox` menempatkan formulir di tengah dengan lebar maksimum 600 piksel logis.
+
+   Saat keyboard muncul, ruang yang tersedia untuk isi halaman berkurang. Pesan kesalahan juga bisa membuat formulir bertambah tinggi. Karena `Column` berada di dalam `SingleChildScrollView`, pengguna dapat menggulir sampai isian bawah dan tombol **Simpan**. Isi dialog ringkasan juga dapat digulir jika ruangnya terbatas.
+
+4. **Apa peran `GlobalKey<FormState>`, `validator`, dan `validate()` saat tombol Simpan ditekan? Berikan satu contoh nilai yang ditolak oleh validasi dan jelaskan mengapa memilih jenis input atau papan ketik saja belum cukup.**
+
+   `GlobalKey<FormState>` dipasang pada `Form` agar fungsi yang menangani tombol **Simpan** dapat mengambil `FormState` melalui `_formKey.currentState`. Ketika tombol ditekan, `validate()` menjalankan `validator` pada setiap `TextFormField`. Setiap validator mengembalikan pesan jika isian bermasalah atau `null` jika isian diterima. Jika ada yang gagal, pesan muncul pada kolom yang bersangkutan dan dialog belum dibuka.
+
+   Sebagai contoh, Tahun Selesai `2024` ditolak jika Tahun Mulai adalah `2025`. Keduanya bisa diketik dengan papan ketik angka dan sama-sama terdiri dari empat digit, tetapi urutannya tidak sesuai. Karena itu, formulir memeriksa format tahun sekaligus membandingkan kedua nilai. Tahun Selesai boleh kosong, sedangkan Institusi, Program Studi, dan Tahun Mulai wajib diisi. Isian wajib yang berisi spasi saja juga ditolak setelah diperiksa dengan `trim()`.
+
+   Setelah semua kolom lolos, `form.save()` menjalankan `onSaved` untuk mengambil Institusi dan Program Studi. Nilai tahun dibaca dari `TextEditingController`. Aplikasi kemudian menyusun isian tersebut dan menampilkannya dalam dialog **Ringkasan Edukasi**. Pada tahap ini, nilai yang dikumpulkan digunakan untuk ringkasan di aplikasi.
+
+## Harap Dibaca (Tugas 8)
+
+Tutorial 09 sudah menghasilkan drawer, formulir Tambah Proyek, dan dialog hasil pengisian. Saya memakai alur itu sebagai dasar untuk menambahkan **Tambah Edukasi**, karena riwayat pendidikan merupakan bagian dari portofolio saya. Berikut perubahan yang bisa dilihat saat mencoba versi Tugas 8.
+
+- **Formulir Tambah Edukasi** dapat dibuka dari kartu beranda dan menu **Add Education** di drawer. Pengguna dapat mengisi institusi, program studi, tahun mulai, serta tahun selesai jika sudah diketahui. Isian yang valid ditampilkan di dialog ringkasan.
+- **Pratinjau durasi pendidikan** langsung mengikuti perubahan pada kedua kolom tahun. Misalnya, tahun mulai `2025` dan tahun selesai `2029` menampilkan perkiraan empat tahun, yang juga ditampilkan di ringkasan. Durasi tersebut berupa perkiraan karena formulir hanya meminta tahun.
+- **Tombol kembali pada kedua formulir** memberi akses langsung ke beranda dari AppBar Tambah Edukasi dan Tambah Proyek. Drawer tetap dapat dibuka dari ikon di sisi kanan AppBar, dan pilihan yang aktif ditandai sesuai dengan halaman yang sedang tampil.
+
+Untuk mengatur tujuan kartu, `ItemHomepage` menyimpan informasi halaman yang dituju, lalu `ItemCard` menggunakannya saat kartu ditekan. Alur kembali ke beranda juga ditempatkan dalam satu fungsi yang digunakan oleh drawer dan kedua formulir.
+
+## DOKUMENTASI AI Tugas 8
+
+### AI Disclosure
+
+Dalam mengerjakan Tugas 8, saya menggunakan Gemini dengan model Hydrogen untuk membantu mempelajari konsep Flutter. Saya juga menggunakan ChatGPT/Codex dengan model GPT-6.2 Sol untuk membahas checklist tugas, memahami alur navigasi dan validasi, serta meninjau proyek yang sudah dibuat pada Tutorial 09. Saya memilih Edukasi sebagai bagian yang ingin saya tambahkan dan membagi pengerjaan menjadi beberapa tahap agar saya bisa menelusuri perubahan sebelum melakukan commit.
+
+Codex membantu menerapkan rancangan formulir dan validator, menghubungkan kartu dan drawer, menyiapkan pengujian widget, serta menyusun draf jawaban reflektif. Saya mengarahkan urutan pengerjaan, menanyakan jalur navigasi yang belum tersedia, dan mengusulkan tombol kembali di kedua formulir. Commit saya lakukan sendiri setelah meninjau tiap kelompok perubahan.
+
+### Contoh Prompt yang Saya Gunakan
+
+Contoh berikut diringkas dari arahan dan pertanyaan saya selama pengerjaan.
+
+1. > Bantu saya memahami checklist Tugas 8 dan jelaskan alur pengerjaannya secara bertahap. Berikan saran kode untuk tiap tahap, lalu terapkan setelah saya konfirmasi.
+2. > Mulai dari formulir Edukasi dulu. Setelah isi dan validasinya jelas, lanjutkan sampai formulir bisa dibuka dari beranda supaya saya bisa meninjau satu alur lengkap sebelum commit.
+3. > Cek lagi hasilnya terhadap checklist dan rubrik nilai 4. Jelaskan bagian yang termasuk hasil tutorial dan bagian yang menjadi tambahan di Tugas 8.
+4. > Tambahkan tombol kembali di AppBar formulir Edukasi agar pengguna bisa kembali ke beranda tanpa membuka drawer. Terapkan alur yang sama di formulir Tambah Proyek.
+5. > Aku cukup kebingungan dengan flow program , coba jelaskan ke aku dan berikan potongan code yang mengarah ke alur tersebut.
+6. > Aku penasaran, disini project flutter apakah dia seperti django yang menyediakan form bawaan gitu? atau buat sendiri. 
+
+### Verifikasi dan Debugging
+
+Saya meminta Codex memeriksa proyek setelah formulir Edukasi terhubung ke beranda dan drawer. Pemeriksaan diulang setelah tombol kembali dan pratinjau durasi ditambahkan. Pada pemeriksaan akhir, `flutter analyze --no-pub` menghasilkan `No issues found` dan `flutter test --no-pub` meluluskan 15 pengujian widget.
+
+Saya memeriksa dua jalur masuk karena keduanya menghasilkan riwayat navigasi yang berbeda. Pengujian membuka formulir dari kartu dan dari drawer, lalu memeriksa apakah pengguna dapat kembali ke beranda. Jika formulir dibuka dari drawer beranda, rute beranda sudah tergantikan. Kasus ini perlu diuji karena memanggil `pop()` saja tidak akan mengembalikan pengguna ke beranda.
+
+Untuk formulir Edukasi, pengujian juga mencakup isian wajib yang kosong, urutan tahun yang salah, perubahan pratinjau durasi, serta dialog ringkasan. Satu pengujian menyimulasikan layar sempit dengan keyboard terbuka untuk memeriksa apakah tombol **Simpan** masih dapat dijangkau dengan menggulir.
+
+### Refleksi Penggunaan AI
+
+Perubahan pada formulir, navigasi, dan tampilan akan sulit saya ikuti jika dibahas sekaligus. Karena itu, saya memberi batas yang lebih jelas pada tiap tahap. Saya mulai dari isian yang dibutuhkan, lalu menelusuri bagaimana pengguna membuka formulir dari beranda dan bagaimana tombol **Simpan** menampilkan dialog ringkasan.
+
+Pertanyaan tentang tombol kembali membantu saya memahami kenapa cara membuka halaman berpengaruh saat pengguna ingin kembali ke beranda. Setelah membandingkan jalur kartu dan drawer, saya meminta tombol tersebut tersedia juga pada formulir Proyek agar kedua halaman bisa digunakan dengan cara yang sama. Saat meninjau rubrik, saya juga mempertimbangkan manfaat setiap tambahan. Pratinjau durasi membantu pengguna mengetahui hasil dari isian tahunnya sebelum membuka ringkasan.
+
+Rancangan isian tahun mulai dan tahun selesai tetap perlu dicocokkan dengan model Edukasi di proyek Django, yang saat itu belum tersedia untuk diperiksa. Dari sini saya belajar membedakan asumsi dalam rancangan dari perilaku yang sudah diuji. Widget test dapat memeriksa cara formulir memvalidasi dan menampilkan data, sedangkan kesesuaian nama dan tipe field perlu ditinjau dari model Django ketika integrasi dilakukan.
+
+### Link Percakapan AI Tugas 8
+
+`https://share.gemini.google/nuAKZKC2omn9
+
+### Sumber Penjelasan
+
+- PDF Tutorial 09 dan PDF Tugas 8 yang digunakan selama pengerjaan.
+- [Flutter API: Navigator](https://api.flutter.dev/flutter/widgets/Navigator-class.html)
+- [Flutter: Add a drawer to a screen](https://docs.flutter.dev/cookbook/design/drawer)
+- [Flutter: Build a form with validation](https://docs.flutter.dev/cookbook/forms/validation)
+- [Flutter: Understanding constraints](https://docs.flutter.dev/ui/layout/constraints)
+
+## Proses Pengerjaan
+
+### Tutorial 08 — Dasar aplikasi Flutter
+
+Pada tahap ini, saya menyiapkan proyek Flutter dan mempelajari struktur direktori serta peran `main.dart` sebagai titik awal aplikasi. Halaman utama kemudian dipisahkan ke `menu.dart` dan diubah menjadi `StatelessWidget` karena belum memerlukan pengelolaan state lokal.
+
+Saya juga menyusun halaman menggunakan widget seperti `Scaffold`, `Column`, dan `GridView`, serta membuat `InfoCard` untuk identitas dan `ItemCard` untuk menu. Ketika kartu menu ditekan, aplikasi menampilkan pesan melalui SnackBar.
+
+### Tugas 7 — Penyesuaian portofolio pribadi
+
+Saya melanjutkan proyek Tutorial 08 dengan memberikan warna yang berbeda pada setiap kartu menu melalui model `ItemHomepage`. Struktur kode juga dirapikan dengan memisahkan model, `InfoCard`, dan `ItemCard` ke file tersendiri.
+
+Pada bagian tampilan, saya menambahkan panel sambutan, ikon identitas, dan bagian Tentang Saya. Susunan kartu disesuaikan dengan lebar layar agar lebih nyaman dibaca. Setelah perubahan selesai, saya memeriksa kode menggunakan `flutter analyze` dan menjalankan pengujian widget untuk identitas serta pesan SnackBar.
+
+### Tutorial 09 — Navigasi dan formulir proyek
+
+Saya memisahkan halaman dan widget ke direktori masing-masing, lalu menyiapkan drawer untuk berpindah antara beranda dan formulir Tambah Proyek. Saya mempelajari cara menghubungkan `Form` dengan validator dan menampilkan hasil pengisian dalam dialog. Pada tahap ini, kartu Tambah Proyek di beranda juga mulai membuka formulir.
+
+### Tugas 8 — Formulir edukasi dan penyempurnaan navigasi
+
+Saya mulai dengan menyusun isian dan validasi formulir Edukasi. Setelah formulir dapat menghasilkan ringkasan, saya menghubungkannya ke kartu beranda dan menambahkan pilihan **Add Education** pada drawer. Saya kemudian meninjau perpindahan antara beranda, formulir Proyek, dan formulir Edukasi, termasuk penanda pilihan yang sedang aktif.
+
+Pada tahap berikutnya, saya menambahkan pratinjau durasi dari dua tahun yang diisi dan tombol kembali pada kedua formulir. Saya membagi commit berdasarkan alur yang selesai, mulai dari formulir dan navigasinya, lalu pratinjau dan akses kembali ke beranda. Setelah itu, saya memeriksa ulang hasilnya dan melengkapi penjelasan di README.
+
+## Menjalankan Proyek
+
+Siapkan Git, Flutter SDK, dan Google Chrome. Gunakan Flutter yang menyertakan Dart sesuai persyaratan di `pubspec.yaml` pada branch yang akan dijalankan. Periksa instalasi Flutter dan pastikan Chrome muncul pada daftar perangkat.
+
+```bash
+flutter doctor
+flutter devices
+```
+
+Clone repositori, masuk ke direktori proyek, lalu pilih branch Tugas 8. Untuk membuka versi Tugas 7, gunakan `git switch Tugas07Mobile` pada langkah yang sama.
+
+```bash
+git clone https://github.com/SutaKarmana/myportofolio_mobile.git
+cd myportofolio_mobile
+git switch Tugas08Mobile
+flutter pub get
+flutter run -d chrome
+```
+
+Untuk mencoba alur Tugas 8, buka **Tambah Edukasi** dari beranda dan tekan **Simpan** saat isian masih kosong. Isi Institusi dan Program Studi, lalu masukkan `2025` dan `2029` untuk melihat perkiraan durasi. Tekan **Simpan** lagi untuk membuka dialog ringkasan. Coba kembali melalui tombol panah pada AppBar, lalu buka lagi formulir dari **Add Education** di drawer dan pilih **Home** untuk membandingkan kedua jalur.
+
+Setelah dependensi tersedia, jalankan pemeriksaan berikut dari direktori proyek.
+
+```bash
+flutter analyze --no-pub
+flutter test --no-pub
+```
