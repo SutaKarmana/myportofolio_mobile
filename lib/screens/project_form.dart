@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../navigation/home_navigation.dart';
+
 class ProjectFormPage extends StatefulWidget {
   const ProjectFormPage({super.key, this.drawer});
 
@@ -75,6 +77,13 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text('Add Project Form')),
+        leading: BackButton(
+          onPressed: () => returnToPortfolioHome(
+            Navigator.of(context),
+            isFirstRoute: ModalRoute.of(context)!.isFirst,
+          ),
+        ),
+        actions: [if (widget.drawer != null) const DrawerButton()],
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
