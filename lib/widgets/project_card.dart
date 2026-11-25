@@ -1,9 +1,13 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:provider/provider.dart';
 
 import '../models/item_homepage.dart';
 import '../models/portfolio_page.dart';
 import '../screens/education_form.dart';
 import '../screens/project_form.dart';
+import '../screens/project_list_screen.dart';
+import '../services/auth_state.dart';
+import 'auth_guard.dart';
 import 'left_drawer.dart';
 
 /// Menampilkan kartu aksi berdasarkan model menu yang diterima.
@@ -22,7 +26,29 @@ class ItemCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () {
+        onTap: () async {
+          if (item.destination == PortfolioPage.project) {
+            final loggedIn = await ensureLoggedIn(context);
+            if (!context.mounted || !loggedIn) return;
+          }
+
+          if (item.name == 'Logout') {
+            final auth = context.read<AuthState>();
+            final wasLoggedIn = auth.isLoggedIn;
+            if (wasLoggedIn) await auth.logout();
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context)
+              ..clearSnackBars()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(
+                    wasLoggedIn ? 'Berhasil logout.' : 'Kamu belum login.',
+                  ),
+                ),
+              );
+            return;
+          }
+
           final messenger = ScaffoldMessenger.of(context);
           messenger.clearSnackBars();
           if (item.destination != PortfolioPage.education) {
@@ -36,6 +62,7 @@ class ItemCard extends StatelessWidget {
           }
 
           final page = switch (item.destination) {
+            PortfolioPage.projectList => const ProjectListScreen(),
             PortfolioPage.project => const ProjectFormPage(
               drawer: LeftDrawer(currentPage: PortfolioPage.project),
             ),

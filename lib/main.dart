@@ -1,5 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
+import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   // Menjalankan MyApp sebagai widget awal aplikasi.
@@ -11,17 +14,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'MyPortfolio',
-      // Menentukan tema Material yang digunakan oleh halaman aplikasi.
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
-          secondary: Colors.amber[700],
+    return MultiProvider(
+      providers: [
+        Provider<ApiClient>(create: (_) => ApiClient()),
+        ChangeNotifierProvider<AuthState>(
+          create: (context) => AuthState(context.read<ApiClient>()),
         ),
-        useMaterial3: true,
+      ],
+      child: MaterialApp(
+        title: 'MyPortfolio',
+        // Menentukan tema Material yang digunakan oleh halaman aplikasi.
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.indigo,
+            secondary: Colors.amber[700],
+          ),
+          useMaterial3: true,
+        ),
+        home: const MyHomePage(), // Halaman yang pertama kali ditampilkan.
       ),
-      home: const MyHomePage(), // Halaman yang pertama kali ditampilkan.
     );
   }
 }

@@ -12,7 +12,12 @@ class MyHomePage extends StatelessWidget {
 
   // Setiap item menyimpan nama, ikon, dan warna untuk satu kartu menu.
   static const items = [
-    ItemHomepage('Lihat Proyek', Icons.folder_outlined, Color(0xFF355A92)),
+    ItemHomepage(
+      'Lihat Proyek',
+      Icons.folder_outlined,
+      Color(0xFF355A92),
+      destination: PortfolioPage.projectList,
+    ),
     ItemHomepage(
       'Tambah Proyek',
       Icons.add_circle_outline,

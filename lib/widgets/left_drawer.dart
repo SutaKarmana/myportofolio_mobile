@@ -1,16 +1,19 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:provider/provider.dart';
 
 import '../models/portfolio_page.dart';
 import '../navigation/home_navigation.dart';
 import '../screens/education_form.dart';
 import '../screens/project_form.dart';
+import '../services/auth_state.dart';
+import 'auth_guard.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key, required this.currentPage});
 
   final PortfolioPage currentPage;
 
-  void _navigateTo(BuildContext context, PortfolioPage target) {
+  Future<void> _navigateTo(BuildContext context, PortfolioPage target) async {
     final navigator = Navigator.of(context);
     final isFirstRoute = ModalRoute.of(context)!.isFirst;
     navigator.pop(); // Tutup drawer sebelum berpindah halaman.
@@ -19,6 +22,12 @@ class LeftDrawer extends StatelessWidget {
     if (target == PortfolioPage.home) {
       returnToPortfolioHome(navigator, isFirstRoute: isFirstRoute);
       return;
+    }
+
+    if (target == PortfolioPage.project) {
+      // Pakai konteks navigator karena drawer sudah ditutup.
+      final loggedIn = await ensureLoggedIn(navigator.context);
+      if (!loggedIn || !navigator.mounted) return;
     }
 
     final page = target == PortfolioPage.project
@@ -35,6 +44,7 @@ class LeftDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = context.watch<AuthState>().isLoggedIn;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -80,6 +90,26 @@ class LeftDrawer extends StatelessWidget {
             selected: currentPage == PortfolioPage.education,
             onTap: () => _navigateTo(context, PortfolioPage.education),
           ),
+          if (isLoggedIn)
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () async {
+                final auth = context.read<AuthState>();
+                Navigator.of(context).pop();
+                await auth.logout();
+              },
+            )
+          else
+            ListTile(
+              leading: const Icon(Icons.login),
+              title: const Text('Login'),
+              onTap: () async {
+                final navigator = Navigator.of(context);
+                navigator.pop();
+                await ensureLoggedIn(navigator.context);
+              },
+            ),
         ],
       ),
     );
