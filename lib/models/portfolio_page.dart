@@ -1,1 +1,1 @@
-enum PortfolioPage { home, project, education }
+enum PortfolioPage { home, project, education, projectList }
